@@ -252,9 +252,9 @@ public class Player{
      * @param sacrifice number of sacrifices
      * @return the number of plate appearances of player
      */
-    public int calculatePlateAppearances(int hits, int out, int strikeouts, int walks, int hitByPitch, int sacrifice)
+    public int calculatePlateAppearances(int hits, int out, int strikeouts, int walks, int hitByPitch, int sacrifice, int error)
     {
-        return hits + out + strikeouts + walks + hitByPitch + sacrifice;
+        return hits + out + strikeouts + walks + hitByPitch + sacrifice + error;
     }
     
     /**
@@ -281,7 +281,7 @@ public class Player{
     public String toString()
     {
         int numAtBats = this.calculateNumAtBats(this.getHits(), this.getOuts(), this.getStrikeouts(), this.getErrors());
-        int numPlateAppearances = this.calculatePlateAppearances(this.getHits(), this.getOuts(), this.getStrikeouts(), this.getWalks(), this.getHitByPitches(), this.getSacrifices());
+        int numPlateAppearances = this.calculatePlateAppearances(this.getHits(), this.getOuts(), this.getStrikeouts(), this.getWalks(), this.getHitByPitches(), this.getSacrifices(), this.getErrors());
         return  this.getName() + "\t"
                 + numAtBats + "\t"
                 + this.getHits() + "\t"
@@ -290,8 +290,7 @@ public class Player{
                 + this.getHitByPitches() + "\t"
                 + this.getSacrifices() + "\t"
                 + String.format("%.3f", this.calculateBattingAverage(this.getHits(), numAtBats)) + "\t"
-                + String.format("%.3f", this.calculateOnBasePercentage(this.getHits(), this.getWalks(), this.getHitByPitches(), numPlateAppearances)) + "\t"
-                + String.format("%d", numPlateAppearances)
+                + String.format("%.3f", this.calculateOnBasePercentage(this.getHits(), this.getWalks(), this.getHitByPitches(), numPlateAppearances))
                 + "\n";
     }
 
