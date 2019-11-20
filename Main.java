@@ -26,7 +26,6 @@ public class Main {
         catch(FileNotFoundException ex)
         {
             input.close();
-            //fileReader.close();
             throw ex;
         }
 
@@ -43,7 +42,7 @@ public class Main {
                 header = line.substring(line.indexOf(' ') + 1, line.length() - 3);  // Get stat header in line
                 continue;
             }
-            if(line.isBlank())  // If line is blank (line before new header)
+            if(line.contains("\n"))  // If line is blank (line before new header)
                 continue;   // Skip the line
             switch(header)
             {
@@ -154,8 +153,7 @@ public class Main {
                     break;
             }
             if(!multipleEntries)    // Add player to hash map if not already in map
-                hashMapPlayers.put(playerKey, player);
-                //System.out.println(hashMapPlayers.get(playerKey));           
+                hashMapPlayers.put(playerKey, player);          
         }
 
         FileWriter outFile = new FileWriter("leaders.txt");
@@ -175,9 +173,7 @@ public class Main {
         i = 0; // Reset index to beginning of array
         displayPlayers(bWriter, playerArray, i);    // Display all players and their stats
 
-        displayLeaders(bWriter, hashMapPlayers);
-        
-
+        displayLeaders(bWriter, hashMapPlayers);    // Display all leaders
 
         input.close();
         keyFile.close();
@@ -225,20 +221,194 @@ public class Main {
         {
             if(map.get(pKey).getHits() != firstBiggest && map.get(pKey).getHits() != secondBiggest && map.get(pKey).getHits() != thirdBiggest)
             {
-                if(map.get(pKey).getHits() > firstBiggest)
+                if(map.get(pKey).getHits() > firstBiggest)  // If greater than most number of hits
                 {
                     thirdBiggest = secondBiggest;
                     secondBiggest = firstBiggest;
                     firstBiggest = map.get(pKey).getHits();
                 }
-                else if(map.get(pKey).getHits() > secondBiggest)
+                else if(map.get(pKey).getHits() > secondBiggest)    // If less than most number of hits, but greater than second most
                 {
                     thirdBiggest = secondBiggest;
                     secondBiggest = map.get(pKey).getHits();
                 }
-                else if(map.get(pKey).getHits() > thirdBiggest)
+                else if(map.get(pKey).getHits() > thirdBiggest) // If less than first and second most number of hits, but greater than third most
                 {
                     thirdBiggest = map.get(pKey).getHits();
+                }
+            }
+        }
+        scores[2] = thirdBiggest;   // Return third place score
+    }
+    
+    /**
+     * Gets top 3 walks scores
+     * @param map hash map to search for scores
+     * @param scores array to store scores in
+     */
+    public static void getLeaderScoresWalks(HashMap<Integer,Player> map, int[] scores)
+    {
+        int firstBiggest;
+        int secondBiggest;
+        int thirdBiggest;
+        firstBiggest = 0;
+
+        for(int pKey: map.keySet()) // Gets first highest score
+        {
+            if(map.get(pKey).getWalks() > firstBiggest)
+                firstBiggest = map.get(pKey).getWalks();
+        }
+        scores[0] = firstBiggest;   // Return first place score
+
+        firstBiggest = secondBiggest = 0;
+        for(int pKey: map.keySet())   // Stores hash map of players into array
+        {
+            if(map.get(pKey).getWalks() > firstBiggest)
+            {
+                secondBiggest = firstBiggest;
+                firstBiggest = map.get(pKey).getWalks();
+            }
+            else if(map.get(pKey).getWalks() < firstBiggest && map.get(pKey).getWalks() > secondBiggest)
+            {
+                secondBiggest = map.get(pKey).getWalks();
+            }
+        }
+        scores[1] = secondBiggest; // Return second place score
+        firstBiggest = secondBiggest = thirdBiggest = 0;
+        for(int pKey:map.keySet())
+        {
+            if(map.get(pKey).getWalks() != firstBiggest && map.get(pKey).getWalks() != secondBiggest && map.get(pKey).getWalks() != thirdBiggest)
+            {
+                if(map.get(pKey).getWalks() > firstBiggest) // If greater than most number of walks
+                {
+                    thirdBiggest = secondBiggest;
+                    secondBiggest = firstBiggest;
+                    firstBiggest = map.get(pKey).getWalks();
+                }
+                else if(map.get(pKey).getWalks() > secondBiggest)   // If less than most number of walks, but greater than second most
+                {
+                    thirdBiggest = secondBiggest;
+                    secondBiggest = map.get(pKey).getWalks();
+                }
+                else if(map.get(pKey).getWalks() > thirdBiggest)    // If less than first and second most number of walks, but greater than third most
+                {
+                    thirdBiggest = map.get(pKey).getWalks();
+                }
+            }
+        }
+        scores[2] = thirdBiggest;   // Return third place score
+    }
+
+    /**
+     * Gets top 3 strikeouts scores
+     * @param map hash map to search for scores
+     * @param scores array to store scores in
+     */
+    public static void getLeaderScoresStrikeouts(HashMap<Integer,Player> map, int[] scores)
+    {
+        int firstLowest;
+        int secondLowest;
+        int thirdLowest;
+        firstLowest = 0;
+
+        for(int pKey: map.keySet()) // Gets first highest score
+        {
+            if(map.get(pKey).getWalks() < firstLowest)
+                firstLowest = map.get(pKey).getWalks();
+        }
+        scores[0] = firstLowest;   // Return first place score
+
+        firstLowest = secondLowest = 0;
+        for(int pKey: map.keySet())   // Stores hash map of players into array
+        {
+            if(map.get(pKey).getWalks() < firstLowest)
+            {
+                secondLowest = firstLowest;
+                firstLowest = map.get(pKey).getWalks();
+            }
+            else if(map.get(pKey).getWalks() > firstLowest && map.get(pKey).getWalks() < secondLowest)
+            {
+                secondLowest = map.get(pKey).getWalks();
+            }
+        }
+        scores[1] = secondLowest; // Return second place score
+        firstLowest = secondLowest = thirdLowest = 0;
+        for(int pKey:map.keySet())
+        {
+            if(map.get(pKey).getWalks() != firstLowest && map.get(pKey).getWalks() != secondLowest && map.get(pKey).getWalks() != thirdLowest)
+            {
+                if(map.get(pKey).getWalks() < firstLowest)  // If lower than current lowest number of strikeout
+                {
+                    thirdLowest = secondLowest;
+                    secondLowest = firstLowest;
+                    firstLowest = map.get(pKey).getWalks();
+                }
+                else if(map.get(pKey).getWalks() < secondLowest)    // If lower than second lowest number of strikeout but greater than lowest number of strikeouts
+                {
+                    thirdLowest = secondLowest;
+                    secondLowest = map.get(pKey).getWalks();
+                }
+                else if(map.get(pKey).getWalks() < thirdLowest) // If great than first and second lowest number of strikeouts but less than third lowest number of strikeouts
+                {
+                    thirdLowest = map.get(pKey).getWalks();
+                }
+            }
+        }
+        scores[2] = thirdLowest;   // Return third place score
+    }
+    
+    /**
+     * Gets top 3 hit by pitches scores
+     * @param map hash map to search for scores
+     * @param scores array to store scores in
+     */
+    public static void getLeaderScoresHitByPitch(HashMap<Integer,Player> map, int[] scores)
+    {
+        int firstBiggest;
+        int secondBiggest;
+        int thirdBiggest;
+        firstBiggest = 0;
+
+        for(int pKey: map.keySet()) // Gets first highest score
+        {
+            if(map.get(pKey).getHitByPitches() > firstBiggest)
+                firstBiggest = map.get(pKey).getHitByPitches();
+        }
+        scores[0] = firstBiggest;   // Return first place score
+
+        firstBiggest = secondBiggest = 0;
+        for(int pKey: map.keySet())   // Stores hash map of players into array
+        {
+            if(map.get(pKey).getHitByPitches() > firstBiggest)
+            {
+                secondBiggest = firstBiggest;
+                firstBiggest = map.get(pKey).getHitByPitches();
+            }
+            else if(map.get(pKey).getHitByPitches() < firstBiggest && map.get(pKey).getHitByPitches() > secondBiggest)
+            {
+                secondBiggest = map.get(pKey).getHitByPitches();
+            }
+        }
+        scores[1] = secondBiggest; // Return second place score
+        firstBiggest = secondBiggest = thirdBiggest = 0;
+        for(int pKey:map.keySet())
+        {
+            if(map.get(pKey).getHitByPitches() != firstBiggest && map.get(pKey).getHitByPitches() != secondBiggest && map.get(pKey).getHitByPitches() != thirdBiggest)
+            {
+                if(map.get(pKey).getHitByPitches() > firstBiggest)  // If greater than greatest number of hit by pitches
+                {
+                    thirdBiggest = secondBiggest;
+                    secondBiggest = firstBiggest;
+                    firstBiggest = map.get(pKey).getHitByPitches();
+                }
+                else if(map.get(pKey).getHitByPitches() > secondBiggest)    // If less than greatest number of hit by pitches, but less than second most
+                {
+                    thirdBiggest = secondBiggest;
+                    secondBiggest = map.get(pKey).getHitByPitches();
+                }
+                else if(map.get(pKey).getHitByPitches() > thirdBiggest)
+                {
+                    thirdBiggest = map.get(pKey).getHitByPitches(); // If less than first and second most number of hit by pitches, but greater than third most
                 }
             }
         }
@@ -319,7 +489,7 @@ public class Main {
      * @param map hash map to search for
      * @param scores array to store scores in
      */
-    public static void getLeaderScoresOnBasePercentage(HashMap<Integer,Player> map, double[] scores)
+    public static void getLeaderScoresOnBasePercentage(HashMap<Integer,Player> map, double[] scores) throws IOException
     {
         double firstBiggest;
         double secondBiggest;
@@ -327,39 +497,37 @@ public class Main {
         int plateAppearances;
         double onBasePercentage;
         firstBiggest = 0;
-
-        for(int pKey: map.keySet()) // Gets first highest score
+        for(Player player: map.values())
         {
-            plateAppearances = map.get(pKey).calculatePlateAppearances(map.get(pKey).getHits(), map.get(pKey).getOuts(), map.get(pKey).getStrikeouts(), map.get(pKey).getWalks(), map.get(pKey).getHitByPitches(), map.get(pKey).getSacrifices());
-            onBasePercentage = map.get(pKey).calculateOnBasePercentage(map.get(pKey).getHits(), map.get(pKey).getWalks(), map.get(pKey).getHitByPitches(), plateAppearances);
-            if(onBasePercentage > firstBiggest)   // If batting average is bigger than first biggest
+            plateAppearances = player.calculatePlateAppearances(player.getHits(), player.getOuts(), player.getStrikeouts(), player.getWalks(), player.getHitByPitches(), player.getSacrifices(), player.getErrors());
+            onBasePercentage = player.calculateOnBasePercentage(player.getHits(), player.getWalks(), player.getHitByPitches(), plateAppearances);
+            if(onBasePercentage > firstBiggest)  // If batting average is bigger than first biggest
                 firstBiggest = onBasePercentage;
         }
-        scores[0] = firstBiggest;   // Return first place score
+        scores[0] = firstBiggest;
 
         firstBiggest = secondBiggest = 0;
-        for(int pKey: map.keySet())   // Stores hash map of players into array
+        for(Player player: map.values())
         {
-            plateAppearances = map.get(pKey).calculatePlateAppearances(map.get(pKey).getHits(), map.get(pKey).getOuts(), map.get(pKey).getStrikeouts(), map.get(pKey).getWalks(), map.get(pKey).getHitByPitches(), map.get(pKey).getSacrifices());
-            onBasePercentage = map.get(pKey).calculateOnBasePercentage(map.get(pKey).getHits(), map.get(pKey).getWalks(), map.get(pKey).getHitByPitches(), plateAppearances);
-            if(onBasePercentage > firstBiggest)
+            plateAppearances = player.calculatePlateAppearances(player.getHits(), player.getOuts(), player.getStrikeouts(), player.getWalks(), player.getHitByPitches(), player.getSacrifices(), player.getErrors());
+            onBasePercentage = player.calculateOnBasePercentage(player.getHits(), player.getWalks(), player.getHitByPitches(), plateAppearances);
+            if(onBasePercentage > firstBiggest)  // If batting average is bigger than first biggest
             {
                 secondBiggest = firstBiggest;
                 firstBiggest = onBasePercentage;
             }
-            else if(onBasePercentage < firstBiggest && onBasePercentage > secondBiggest)    // If batting average is bigger than first biggest, but less than second biggest
+            else if(onBasePercentage < firstBiggest && onBasePercentage > secondBiggest)   // If batting average is less than first biggest, but bigger than second biggest
             {
                 secondBiggest = onBasePercentage;
             }
         }
-        scores[1] = secondBiggest; // Return second place score
+        scores[1] = secondBiggest;
+
         firstBiggest = secondBiggest = thirdBiggest = 0;
-        for(int pKey:map.keySet())
+        for(Player player:map.values())
         {
-            plateAppearances = map.get(pKey).calculatePlateAppearances(map.get(pKey).getHits(), map.get(pKey).getOuts(), map.get(pKey).getStrikeouts(), map.get(pKey).getWalks(), map.get(pKey).getHitByPitches(), map.get(pKey).getSacrifices());
-            onBasePercentage = map.get(pKey).calculateOnBasePercentage(map.get(pKey).getHits(), map.get(pKey).getWalks(), map.get(pKey).getHitByPitches(), plateAppearances);
-            if(Math.abs(onBasePercentage - firstBiggest) < THRESHOLD && Math.abs(onBasePercentage - secondBiggest) < THRESHOLD && Math.abs(onBasePercentage - thirdBiggest) < THRESHOLD)
-            {
+            plateAppearances = player.calculatePlateAppearances(player.getHits(), player.getOuts(), player.getStrikeouts(), player.getWalks(), player.getHitByPitches(), player.getSacrifices(), player.getErrors());
+            onBasePercentage = player.calculateOnBasePercentage(player.getHits(), player.getWalks(), player.getHitByPitches(), plateAppearances);
                 if(onBasePercentage > firstBiggest)   // If batting average is bigger than biggest batting average
                 {
                     thirdBiggest = secondBiggest;
@@ -371,11 +539,10 @@ public class Main {
                     thirdBiggest = secondBiggest;
                     secondBiggest = onBasePercentage;
                 }
-                else if(onBasePercentage > thirdBiggest)  // If batting average is less first and second biggest batting average, but bigger than third biggest batting average
+                else if(onBasePercentage > thirdBiggest)  // If batting average is less than first and second biggest batting average, but bigger than third biggest batting average
                 {
                     thirdBiggest = onBasePercentage;
                 }
-            }
         }
         scores[2] = thirdBiggest;   // Return third place score
     }
@@ -396,7 +563,8 @@ public class Main {
         int[] scores = new int[3];  // Scores array for integer scores
         double[] scores2 = new double[3]; // Scores array for double scores
         Player[] playerArray = new Player[map.size()];  // Array to store leaders in for sorting alphabetically
-        bWriter.write("LEADERS\n");
+        Player[] tempArray = new Player[map.size()];    // Temp array to store leaders to check if already displayed to prevent repeat display of leaders
+        bWriter.write("LEAGUE LEADERS\n");
         for(int i = 0; i < NUM_LEADER_STATS; i++)
         {
             totalNumLeaders = 0;    // Counter to keep track of total number of leaders
@@ -409,13 +577,14 @@ public class Main {
                     {
                         bWriter.write("BATTING AVERAGE\n");
                         int j = 0;
+                        //boolean displayed = false;
                         getLeaderScoresBattingAverage(map, scores2);
                         firstScoreDouble = scores2[0];
                         secondScoreDouble = scores2[1];
                         thirdScoreDouble = scores2[2];
                         int numAtBats;
                         double battingAverage;
-                        //System.out.print("1: " + firstScoreDouble + ", 2: " + secondScoreDouble + ", 3: " + thirdScoreDouble + "\n");
+                        boolean awayLeaders = false;
                         for(Player player: map.values())
                         {
                             numAtBats = player.calculateNumAtBats(player.getHits(), player.getOuts(), player.getStrikeouts(), player.getErrors());
@@ -423,27 +592,43 @@ public class Main {
                             if(Math.abs(battingAverage - firstScoreDouble) < THRESHOLD)
                             {
                                 playerArray[j] = player;
+                                tempArray[j] = player;
                                 firstPlaceCounter++;
                                 j++;
                             }
                         }
                         sortAlphabetically(playerArray);    // Sort first place leaders alphabetically
+                        bWriter.write(String.format("%.3f", firstScoreDouble) + "\t");  // Print out score
                         for(int x = 0; x < playerArray.length; x++)
                         {
-                            if(playerArray[x] != null)
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
                             {
-                                if(x == 0)
+                                if(!awayLeaders)
                                 {
-                                    bWriter.write(firstScoreDouble + "\t");
                                     bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
+                                }
+                                else
+                                    bWriter.write(", " + playerArray[x].getName());
+                            }
+                        }
+                        for(int x = 0; x < playerArray.length; x++)
+                        {
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                            {
+                                if(!awayLeaders)
+                                {
+                                    bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
                                 }
                                 else
                                     bWriter.write(", " + playerArray[x].getName());
                             }
                         }
                         totalNumLeaders += firstPlaceCounter;
-                        if(totalNumLeaders < 3) // If 2 or less leaders, find second place leaders
+                        if(totalNumLeaders < 3 && Math.abs(secondScoreDouble - firstScoreDouble) > THRESHOLD) // If 2 or less leaders and second score isn't equal to 1st score, find second place leaders
                         {
+                            awayLeaders = false;
                             bWriter.write("\n");
                             j = 0;
                             Arrays.fill(playerArray, null); // Reset array of leaders
@@ -459,14 +644,28 @@ public class Main {
                                 }
                             }
                             sortAlphabetically(playerArray);    // Sort second place leaders alphabetically
+                            bWriter.write(String.format("%.3f", secondScoreDouble) + "\t"); // Print out score
                             for(int x = 0; x < playerArray.length; x++)
                             {
-                                if(playerArray[x] != null)
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
                                 {
-                                    if(x == 0)
+                                    if(!awayLeaders)
                                     {
-                                        bWriter.write(secondScoreDouble + "\t");
                                         bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // Display home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
                                     }
                                     else
                                         bWriter.write(", " + playerArray[x].getName());
@@ -476,11 +675,13 @@ public class Main {
                         }
                         else // If ties for first were >= 3 do not print out any more leaders and end loop for that stat
                         {
-                            bWriter.write("\n");
+                            Arrays.fill(playerArray, null); 
+                            bWriter.write("\n\n");
                             break;
                         }
-                        if(totalNumLeaders < 3) // If 2 or less leaders, find 3rd place leader
+                        if(totalNumLeaders < 3 && Math.abs(thirdScore - secondScore) > THRESHOLD)   // If 2 or less leaders and if third score isn't equal to second score, find third place leaders
                         {
+                            awayLeaders = false;
                             bWriter.write("\n");
                             j = 0;
                             Arrays.fill(playerArray, null); // Reset array of leaders
@@ -495,14 +696,28 @@ public class Main {
                                 }
                             }
                             sortAlphabetically(playerArray);    // Sort second place leaders alphabetically
+                            bWriter.write(String.format("%.3f", thirdScoreDouble) + "\t");  // Print out score
                             for(int x = 0; x < playerArray.length; x++)
                             {
-                                if(playerArray[x] != null)
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
                                 {
-                                    if(x == 0)
+                                    if(!awayLeaders)
                                     {
-                                        bWriter.write(thirdScoreDouble + "\t");
                                         bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // Display home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
                                     }
                                     else
                                         bWriter.write(", " + playerArray[x].getName());
@@ -510,23 +725,27 @@ public class Main {
                             }
                         }
                         Arrays.fill(playerArray, null); // Reset array of leaders                        
-                        bWriter.write("\n");
+                        bWriter.write("\n\n");
                         break;     
                     }
                 case 1: // Case for displaying ON BASE PERCENTAGE leaders
                     {
-                        bWriter.write("ON BASE PERCENTAGE\n");
+                        Arrays.fill(scores2, 0);
+                        bWriter.write("ON-BASE PERCENTAGE\n");
                         int j = 0;
-                        getLeaderScoresBattingAverage(map, scores2);
+                        getLeaderScoresOnBasePercentage(map, scores2);
                         firstScoreDouble = scores2[0];
                         secondScoreDouble = scores2[1];
                         thirdScoreDouble = scores2[2];
+                        /*bWriter.write("TEST: " + String.format("%.3f",firstScoreDouble) + "\n");
+                        bWriter.write("TEST: " + String.format("%.3f",secondScoreDouble) + "\n");
+                        bWriter.write("TEST: " + String.format("%.3f",thirdScoreDouble) + "\n");*/
                         int plateAppearances;
                         double onBasePercentage;
-                        //System.out.print("1: " + firstScoreDouble + ", 2: " + secondScoreDouble + ", 3: " + thirdScoreDouble + "\n");
+                        boolean awayLeaders = false;
                         for(Player player: map.values())
                         {
-                            plateAppearances = player.calculatePlateAppearances(player.getHits(), player.getOuts(), player.getStrikeouts(), player.getWalks(), player.getHitByPitches(), player.getSacrifices());
+                            plateAppearances = player.calculatePlateAppearances(player.getHits(), player.getOuts(), player.getStrikeouts(), player.getWalks(), player.getHitByPitches(), player.getSacrifices(), player.getErrors());
                             onBasePercentage = player.calculateOnBasePercentage(player.getHits(), player.getWalks(), player.getHitByPitches(), plateAppearances);
                             if(Math.abs(onBasePercentage - firstScoreDouble) < THRESHOLD)
                             {
@@ -536,28 +755,43 @@ public class Main {
                             }
                         }
                         sortAlphabetically(playerArray);    // Sort first place leaders alphabetically
+                        bWriter.write(String.format("%.3f", firstScoreDouble) + "\t"); // Print out score
                         for(int x = 0; x < playerArray.length; x++)
                         {
-                            if(playerArray[x] != null)
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
                             {
-                                if(x == 0)
+                                if(!awayLeaders)
                                 {
-                                    bWriter.write(firstScoreDouble + "\t");
                                     bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
+                                }
+                                else
+                                    bWriter.write(", " + playerArray[x].getName());
+                            }
+                        }
+                        for(int x = 0; x < playerArray.length; x++)
+                        {
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                            {
+                                if(!awayLeaders)
+                                {
+                                    bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
                                 }
                                 else
                                     bWriter.write(", " + playerArray[x].getName());
                             }
                         }
                         totalNumLeaders += firstPlaceCounter;
-                        if(totalNumLeaders < 3) // If 2 or less leaders, find second place leaders
+                        if(totalNumLeaders < 3 && Math.abs(secondScoreDouble - firstScoreDouble) > THRESHOLD) // If 2 or less leaders and first score isn't equal to second score, find second place leaders
                         {
+                            awayLeaders = false;
                             bWriter.write("\n");
                             j = 0;
                             Arrays.fill(playerArray, null); // Reset array of leaders
                             for(Player player: map.values())
                             {
-                                plateAppearances = player.calculatePlateAppearances(player.getHits(), player.getOuts(), player.getStrikeouts(), player.getWalks(), player.getHitByPitches(), player.getSacrifices());
+                                plateAppearances = player.calculatePlateAppearances(player.getHits(), player.getOuts(), player.getStrikeouts(), player.getWalks(), player.getHitByPitches(), player.getSacrifices(), player.getErrors());
                                 onBasePercentage = player.calculateOnBasePercentage(player.getHits(), player.getWalks(), player.getHitByPitches(), plateAppearances);
                                 if(Math.abs(onBasePercentage - secondScoreDouble) < THRESHOLD)
                                 {
@@ -567,14 +801,28 @@ public class Main {
                                 }
                             }
                             sortAlphabetically(playerArray);    // Sort second place leaders alphabetically
+                            bWriter.write(String.format("%.3f", secondScoreDouble) + "\t"); // Print out score
                             for(int x = 0; x < playerArray.length; x++)
                             {
-                                if(playerArray[x] != null)
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
                                 {
-                                    if(x == 0)
+                                    if(!awayLeaders)
                                     {
-                                        bWriter.write(secondScoreDouble + "\t");
                                         bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
                                     }
                                     else
                                         bWriter.write(", " + playerArray[x].getName());
@@ -584,17 +832,19 @@ public class Main {
                         }
                         else // If ties for first were >= 3 do not print out any more leaders and end loop for that stat
                         {
-                            bWriter.write("\n");
+                            Arrays.fill(playerArray, null); 
+                            bWriter.write("\n\n");
                             break;
                         }
-                        if(totalNumLeaders < 3) // If 2 or less leaders, find 3rd place leader
+                        if(totalNumLeaders < 3 && Math.abs(thirdScoreDouble - secondScoreDouble) > THRESHOLD)   // If 2 or less leaders and if third score isn't equal to second score, find third place leaders
                         {
+                            awayLeaders = false;
                             bWriter.write("\n");
                             j = 0;
                             Arrays.fill(playerArray, null); // Reset array of leaders
                             for(Player player: map.values())
                             {
-                                plateAppearances = player.calculatePlateAppearances(player.getHits(), player.getOuts(), player.getStrikeouts(), player.getWalks(), player.getHitByPitches(), player.getSacrifices());
+                                plateAppearances = player.calculatePlateAppearances(player.getHits(), player.getOuts(), player.getStrikeouts(), player.getWalks(), player.getHitByPitches(), player.getSacrifices(), player.getErrors());
                                 onBasePercentage = player.calculateOnBasePercentage(player.getHits(), player.getWalks(), player.getHitByPitches(), plateAppearances);
                                 if(Math.abs(onBasePercentage - thirdScoreDouble) < THRESHOLD)
                                 {
@@ -603,14 +853,28 @@ public class Main {
                                 }
                             }
                             sortAlphabetically(playerArray);    // Sort second place leaders alphabetically
+                            bWriter.write(String.format("%.3f", thirdScoreDouble) + "\t");  // Print out score
                             for(int x = 0; x < playerArray.length; x++)
                             {
-                                if(playerArray[x] != null)
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
                                 {
-                                    if(x == 0)
+                                    if(!awayLeaders)
                                     {
-                                        bWriter.write(thirdScoreDouble + "\t");
                                         bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
                                     }
                                     else
                                         bWriter.write(", " + playerArray[x].getName());
@@ -618,7 +882,7 @@ public class Main {
                             }
                         }
                         Arrays.fill(playerArray, null); // Reset array of leaders                        
-                        bWriter.write("\n");
+                        bWriter.write("\n\n");
                         break;     
                     }
                 case 2: // Case for displaying HITS leaders
@@ -629,7 +893,7 @@ public class Main {
                         firstScore = scores[0];
                         secondScore = scores[1];
                         thirdScore = scores[2];
-                        //System.out.print("1: " + firstScore + ", 2: " + secondScore + ", 3: " + thirdScore + "\n");
+                        boolean awayLeaders = false;
                         for(Player player: map.values())
                         {
                             if(player.getHits() == firstScore)
@@ -640,22 +904,37 @@ public class Main {
                             }
                         }
                         sortAlphabetically(playerArray);    // Sort first place leaders alphabetically
+                        bWriter.write(firstScore + "\t");   // Print out first place leader score
                         for(int x = 0; x < playerArray.length; x++)
                         {
-                            if(playerArray[x] != null)
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
                             {
-                                if(x == 0)
+                                if(!awayLeaders)
                                 {
-                                    bWriter.write(firstScore + "\t");   // Print first place leader score
                                     bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
+                                }
+                                else
+                                    bWriter.write(", " + playerArray[x].getName());
+                            }
+                        }
+                        for(int x = 0; x < playerArray.length; x++)
+                        {
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                            {
+                                if(!awayLeaders)
+                                {
+                                    bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
                                 }
                                 else
                                     bWriter.write(", " + playerArray[x].getName());
                             }
                         }
                         totalNumLeaders += firstPlaceCounter;
-                        if(totalNumLeaders < 3)
+                        if(totalNumLeaders < 3 && Math.abs(secondScore - firstScore) > THRESHOLD) // If 2 or less leaders and if second score isn't equal to first score, find second place leaders
                         {
+                            awayLeaders = false;
                             bWriter.write("\n");
                             j = 0;
                             Arrays.fill(playerArray, null); // Reset player array
@@ -669,14 +948,28 @@ public class Main {
                                 }
                             }
                             sortAlphabetically(playerArray);    // Sort second place leaders alphabetically
+                            bWriter.write(secondScore + "\t");  // Print second place leader score
                             for(int x = 0; x < playerArray.length; x++)
                             {
-                                if(playerArray[x] != null)
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
                                 {
-                                    if(x == 0)
+                                    if(!awayLeaders)
                                     {
-                                        bWriter.write(secondScore + "\t");  // Print second place leader score
                                         bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
                                     }
                                     else
                                         bWriter.write(", " + playerArray[x].getName());
@@ -686,11 +979,13 @@ public class Main {
                         }
                         else // If ties for first were >= 3 do not print out any more leaders and end loop for that stat
                         {
-                            bWriter.write("\n");
+                            Arrays.fill(playerArray, null); 
+                            bWriter.write("\n\n");
                             break;
                         }
-                        if(totalNumLeaders < 3)
+                        if(totalNumLeaders < 3 && Math.abs(thirdScore - secondScore) > THRESHOLD)   // If 2 or less leaders and if third score isn't equal to second score, find third place leaders
                         {
+                            awayLeaders = false;
                             bWriter.write("\n");
                             j = 0;
                             Arrays.fill(playerArray, null); // Reset player array
@@ -703,14 +998,28 @@ public class Main {
                                 }
                             }
                             sortAlphabetically(playerArray);    // Sort third place leaders alphabetically
+                            bWriter.write(thirdScore + "\t");   // Print third place leader score
                             for(int x = 0; x < playerArray.length; x++)
                             {
-                                if(playerArray[x] != null)
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
                                 {
-                                    if(x == 0)
+                                    if(!awayLeaders)
                                     {
-                                        bWriter.write(thirdScore + "\t");   // Print third place leader score
                                         bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
                                     }
                                     else
                                         bWriter.write(", " + playerArray[x].getName());
@@ -718,12 +1027,444 @@ public class Main {
                             }
                         }
                         Arrays.fill(playerArray, null);                        
-                        bWriter.write("\n");
+                        bWriter.write("\n\n");
                         break;     
                     }
-                case 3:
+                case 3: // Case for displaying WALKS leaders
                     {
-                        
+                        bWriter.write("WALKS\n");  
+                        int j = 0;
+                        getLeaderScoresWalks(map, scores);
+                        firstScore = scores[0];
+                        secondScore = scores[1];
+                        thirdScore = scores[2];
+                        boolean awayLeaders = false;
+                        for(Player player: map.values())
+                        {
+                            if(player.getWalks() == firstScore)
+                            {
+                                playerArray[j] = player;
+                                firstPlaceCounter++;
+                                j++;
+                            }
+                            
+                        }
+                        sortAlphabetically(playerArray);    // Sort first place leaders alphabetically
+                        bWriter.write(firstScore + "\t");   // Print first place leader score
+                        for(int x = 0; x < playerArray.length; x++)
+                        {
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
+                            {
+                                if(!awayLeaders)
+                                {
+                                    bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
+                                }
+                                else
+                                    bWriter.write(", " + playerArray[x].getName());
+                            }
+                        }
+                        for(int x = 0; x < playerArray.length; x++)
+                        {
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                            {
+                                if(!awayLeaders)
+                                {
+                                    bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
+                                }
+                                else
+                                    bWriter.write(", " + playerArray[x].getName());
+                            }
+                        }
+                        totalNumLeaders += firstPlaceCounter;
+                        if(totalNumLeaders < 3 && Math.abs(secondScore - firstScore) > THRESHOLD) // If 2 or less leaders and if second score isn't equal to first score, find second place leaders
+                        {
+                            awayLeaders = false;
+                            bWriter.write("\n");
+                            j = 0;
+                            Arrays.fill(playerArray, null); // Reset player array
+                            for(Player player: map.values())
+                            {
+                                if(player.getWalks() == secondScore)
+                                {
+                                    playerArray[j] = player;
+                                    secondPlaceCounter++;
+                                    j++;
+                                }
+                            }
+                            sortAlphabetically(playerArray);    // Sort second place leaders alphabetically
+                            bWriter.write(secondScore + "\t");  // Print second place leader score
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            totalNumLeaders += secondPlaceCounter;
+                        }
+                        else // If ties for first were >= 3 do not print out any more leaders and end loop for that stat
+                        {
+                            Arrays.fill(playerArray, null); 
+                            bWriter.write("\n\n");
+                            break;
+                        }
+                        if(totalNumLeaders < 3 && Math.abs(thirdScore - secondScore) > THRESHOLD)   // If 2 or less leaders and if third score isn't equal to second score, find third place leaders
+                        {
+                            awayLeaders = false;
+                            bWriter.write("\n");
+                            j = 0;
+                            Arrays.fill(playerArray, null); // Reset player array
+                            for(Player player: map.values())
+                            {
+                                if(player.getWalks() == thirdScore)
+                                {
+                                    playerArray[j] = player;
+                                    j++;
+                                }
+                            }
+                            sortAlphabetically(playerArray);    // Sort third place leaders alphabetically
+                            bWriter.write(thirdScore + "\t");   // Print third place leader score
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                        }
+                        Arrays.fill(playerArray, null);                        
+                        bWriter.write("\n\n");
+                        break;     
+                    }
+                case 4: // Case for displaying STRIKEOUTS leaders
+                    {
+                        bWriter.write("STRIKEOUTS\n");   
+                        int j = 0;
+                        getLeaderScoresStrikeouts(map, scores);
+                        firstScore = scores[0];
+                        secondScore = scores[1];
+                        thirdScore = scores[2];
+                        boolean awayLeaders = false;
+                        for(Player player: map.values())
+                        {
+                            if(player.getStrikeouts() == firstScore)
+                            {
+                                playerArray[j] = player;
+                                firstPlaceCounter++;
+                                j++;
+                            }
+                        }
+                        sortAlphabetically(playerArray);    // Sort first place leaders alphabetically
+                        bWriter.write(firstScore + "\t");   // Print first place leader score
+                        for(int x = 0; x < playerArray.length; x++)
+                        {
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
+                            {
+                                if(!awayLeaders)
+                                {
+                                    bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
+                                }
+                                else
+                                    bWriter.write(", " + playerArray[x].getName());
+                            }
+                        }
+                        for(int x = 0; x < playerArray.length; x++)
+                        {
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                            {
+                                if(!awayLeaders)
+                                {
+                                    bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
+                                }
+                                else
+                                    bWriter.write(", " + playerArray[x].getName());
+                            }
+                        }
+                        totalNumLeaders += firstPlaceCounter;
+                        if(totalNumLeaders < 3 && Math.abs(secondScore - firstScore) > THRESHOLD) // If 2 or less leaders and if second score isn't equal to first score, find second place leaders)
+                        {
+                            awayLeaders = false;
+                            bWriter.write("\n");
+                            j = 0;
+                            Arrays.fill(playerArray, null); // Reset player array
+                            for(Player player: map.values())
+                            {
+                                if(player.getStrikeouts() == secondScore)
+                                {
+                                    playerArray[j] = player;
+                                    secondPlaceCounter++;
+                                    j++;
+                                }
+                            }
+                            sortAlphabetically(playerArray);    // Sort second place leaders alphabetically
+                            bWriter.write(secondScore + "\t");  // Print second place leader score
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            totalNumLeaders += secondPlaceCounter;
+                        }
+                        else // If ties for first were >= 3 do not print out any more leaders and end loop for that stat
+                        {
+                            Arrays.fill(playerArray, null); 
+                            bWriter.write("\n\n");
+                            break;
+                        }
+                        if(totalNumLeaders < 3 && Math.abs(thirdScore - secondScore) > THRESHOLD)   // If 2 or less leaders and if third score isn't equal to third score, find second place leaders
+                        {
+                            awayLeaders = false;
+                            bWriter.write("\n");
+                            j = 0;
+                            Arrays.fill(playerArray, null); // Reset player array
+                            for(Player player: map.values())
+                            {
+                                if(player.getStrikeouts() == thirdScore)
+                                {
+                                    playerArray[j] = player;
+                                    j++;
+                                }
+                            }
+                            sortAlphabetically(playerArray);    // Sort third place leaders alphabetically
+                            bWriter.write(thirdScore + "\t");   // Print third place leader score
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                        }
+                        Arrays.fill(playerArray, null);                        
+                        bWriter.write("\n\n");
+                        break;  
+                    }
+                case 5: // Case for displaying HIT BY PITCH leaders
+                    {
+                        bWriter.write("HIT BY PITCH\n");   
+                        int j = 0;
+                        getLeaderScoresHitByPitch(map, scores);
+                        firstScore = scores[0];
+                        secondScore = scores[1];
+                        thirdScore = scores[2];
+                        boolean awayLeaders = false;
+                        for(Player player: map.values())
+                        {
+                            if(player.getHitByPitches() == firstScore)
+                            {
+                                playerArray[j] = player;
+                                firstPlaceCounter++;
+                                j++;
+                            }
+                        }
+                        sortAlphabetically(playerArray);    // Sort first place leaders alphabetically
+                        bWriter.write(firstScore + "\t");   // Print first place leader score
+                        for(int x = 0; x < playerArray.length; x++)
+                        {
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
+                            {
+                                if(!awayLeaders)
+                                {
+                                    bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
+                                }
+                                else
+                                    bWriter.write(", " + playerArray[x].getName());
+                            }
+                        }
+                        for(int x = 0; x < playerArray.length; x++)
+                        {
+                            if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                            {
+                                if(!awayLeaders)
+                                {
+                                    bWriter.write(playerArray[x].getName());
+                                    awayLeaders = true;
+                                }
+                                else
+                                    bWriter.write(", " + playerArray[x].getName());
+                            }
+                        }
+                        totalNumLeaders += firstPlaceCounter;
+                        if(totalNumLeaders < 3 && Math.abs(secondScore - firstScore) > THRESHOLD) // If 2 or less leaders and if second score isn't equal to first score, find second place leaders)
+                        {
+                            awayLeaders = false;
+                            bWriter.write("\n");
+                            j = 0;
+                            Arrays.fill(playerArray, null); // Reset player array
+                            for(Player player: map.values())
+                            {
+                                if(player.getHitByPitches() == secondScore)
+                                {
+                                    playerArray[j] = player;
+                                    secondPlaceCounter++;
+                                    j++;
+                                }
+                            }
+                            sortAlphabetically(playerArray);    // Sort second place leaders alphabetically
+                            bWriter.write(secondScore + "\t");  // Print second place leader score
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            totalNumLeaders += secondPlaceCounter;
+                        }
+                        else // If ties for first were >= 3 do not print out any more leaders and end loop for that stat
+                        {
+                            Arrays.fill(playerArray, null); 
+                            bWriter.write("\n\n");
+                            break;
+                        }
+                        if(totalNumLeaders < 3 && Math.abs(thirdScore - secondScore) > THRESHOLD)   // If 2 or less leaders and if third score isn't equal to second score, find third place leaders
+                        {
+                            awayLeaders = false;
+                            bWriter.write("\n");
+                            j = 0;
+                            Arrays.fill(playerArray, null); // Reset player array
+                            for(Player player: map.values())
+                            {
+                                if(player.getHitByPitches() == thirdScore)
+                                {
+                                    playerArray[j] = player;
+                                    j++;
+                                }
+                            }
+                            sortAlphabetically(playerArray);    // Sort third place leaders alphabetically
+                            bWriter.write(thirdScore + "\t");   // Print third place leader score
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("A"))  // Display away leaders alphabetically first
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                            for(int x = 0; x < playerArray.length; x++)
+                            {
+                                if(playerArray[x] != null && playerArray[x].getTeam().equals("H"))  // DIsplay home leaders alphabetically second
+                                {
+                                    if(!awayLeaders)
+                                    {
+                                        bWriter.write(playerArray[x].getName());
+                                        awayLeaders = true;
+                                    }
+                                    else
+                                        bWriter.write(", " + playerArray[x].getName());
+                                }
+                            }
+                        }
+                        bWriter.write("\n\n");
+                        Arrays.fill(playerArray, null);                     
+                        break;  
                     }
                 default:    System.out.println("Other Cases!");
                             break;
@@ -740,7 +1481,7 @@ public class Main {
      */
     public static void displayPlayers(BufferedWriter bWriter, Player[] arr, int index) throws IOException
     {
-        bWriter.write("Player\tAB\tH\tBB\tK\tHBP\tSac\tBA\tOBP\tPA\n"); // Header for player data display
+        //bWriter.write("Player" + "\t" + "AB" + "\t" + "H" + "\t" + "BB" + "\t" + "K" + "\t" + "HBP" + "\t" + "Sac" + "\t" + "BA" + "\t" + "OBP" + "\n"); // Header for player data display
         bWriter.write("AWAY\n");
         displayPlayersAway(bWriter, arr, index);    // Display AWAY team
         bWriter.write("\nHOME\n");
@@ -797,19 +1538,22 @@ public class Main {
     public static void sortAlphabetically(Player[] arr)
     {
         // Sort player array alphabetically
-        boolean swap = false;
+        boolean swap = true;
         while(swap)
         {
             swap = false;
-            for(int index = 0; index < arr.length; index++)
+            for(int index = 0; index < arr.length - 1; index++)
             {
-                int result = arr[index].compareTo(arr[index + 1].getName());
-                if(result > 0)
+                if(arr[index] != null && arr[index + 1] != null)
                 {
-                    Player temp = arr[index];
-                    arr[index] = arr[index + 1];
-                    arr[index + 1] = temp;
-                    swap = true;
+                    int result = arr[index].compareTo(arr[index + 1].getName());
+                    if(result > 0)
+                    {
+                        Player temp = arr[index];
+                        arr[index] = arr[index + 1];
+                        arr[index + 1] = temp;
+                        swap = true;
+                    }
                 }
             }
         }
