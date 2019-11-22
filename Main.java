@@ -737,9 +737,7 @@ public class Main {
                         firstScoreDouble = scores2[0];
                         secondScoreDouble = scores2[1];
                         thirdScoreDouble = scores2[2];
-                        /*bWriter.write("TEST: " + String.format("%.3f",firstScoreDouble) + "\n");
-                        bWriter.write("TEST: " + String.format("%.3f",secondScoreDouble) + "\n");
-                        bWriter.write("TEST: " + String.format("%.3f",thirdScoreDouble) + "\n");*/
+
                         int plateAppearances;
                         double onBasePercentage;
                         boolean awayLeaders = false;
@@ -1558,5 +1556,4 @@ public class Main {
             }
         }
     }
-
 }
